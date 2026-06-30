@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control de Stock</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section id="loginView" class="login-view">
+        <form id="loginForm" class="login-panel">
+          <div class="brand-mark" aria-hidden="true">
+            <i class="fa-solid fa-dolly"></i>
+          </div>
+          <h1>Control de Stock</h1>
+          <p class="muted">Ingreso seguro al panel de inventario</p>
+
+          <label>
+            Usuario
+            <input id="loginUser" type="text" autocomplete="username" required />
+          </label>
+          <label>
+            Contraseña
+            <input id="loginPass" type="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="primary-button">
+            <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+            Ingresar
+          </button>
+          <p id="loginError" class="error-message" role="alert"></p>
+          <p class="demo-access">
+            Admin: <strong>admin</strong> / <strong>admin123</strong><br />
+            Usuario: <strong>usuario</strong> / <strong>usuario123</strong>
+          </p>
+        </form>
+      </section>
+
+      <section id="appView" class="app-view hidden">
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-brand">
+              <div class="brand-mark small" aria-hidden="true">
+                <i class="fa-solid fa-dolly"></i>
+              </div>
+              <div class="sidebar-title">
+                <h2>Stock</h2>
+                <p>Panel diario</p>
+              </div>
+            </div>
+            <button id="sidebarToggleBtn" type="button" class="sidebar-toggle" aria-label="Minimizar barra lateral">
+              <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </button>
+          </div>
+          <span id="roleBadge" class="role-badge">Administrador</span>
+
+          <label class="date-picker">
+            Fecha seleccionada
+            <input id="selectedDate" type="date" required />
+          </label>
+
+          <nav class="sidebar-actions" aria-label="Acciones principales">
+            <button id="exportDayBtn" type="button" data-tooltip="Exportar el día" title="Exportar el día">
+              <i class="fa-solid fa-file-excel" aria-hidden="true"></i>
+              <span>Exportar día</span>
+            </button>
+            <button id="exportAllBtn" type="button" data-tooltip="Exportar todo" title="Exportar todo">
+              <i class="fa-solid fa-table" aria-hidden="true"></i>
+              <span>Exportar todo</span>
+            </button>
+            <button id="themeToggleBtn" type="button" data-tooltip="Modo oscuro" title="Modo oscuro">
+              <i class="fa-solid fa-moon" aria-hidden="true"></i>
+              <span>Modo oscuro</span>
+            </button>
+            <button id="logoutBtn" type="button" data-tooltip="Cerrar sesión" title="Cerrar sesión">
+              <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+              <span>Cerrar sesión</span>
+            </button>
+          </nav>
+        </aside>
+
+        <section class="workspace">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Inventario</p>
+              <h1 id="pageTitle">Stock del día</h1>
+            </div>
+            <div class="filters">
+              <input id="searchInput" type="search" placeholder="Buscar item" />
+              <select id="categoryFilter" aria-label="Filtrar por categoría"></select>
+            </div>
+          </header>
+
+          <section class="metrics" aria-label="Resumen">
+            <article>
+              <span>Total items</span>
+              <strong id="metricItems">0</strong>
+            </article>
+            <article>
+              <span>Unidades</span>
+              <strong id="metricUnits">0</strong>
+            </article>
+            <article>
+              <span>Bajo mínimo</span>
+              <strong id="metricLow">0</strong>
+            </article>
+            <article>
+              <span>Valor estimado</span>
+              <strong id="metricValue">$0</strong>
+            </article>
+          </section>
+
+          <section class="content-grid">
+            <form id="itemForm" class="panel form-panel">
+              <div class="panel-heading">
+                <h2 id="formTitle">Agregar item</h2>
+                <button id="cancelEditBtn" type="button" class="ghost-button hidden">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                  Cancelar
+                </button>
+              </div>
+
+              <label>
+                Nombre del item
+                <input id="itemName" type="text" required />
+              </label>
+              <div class="form-row">
+                <label>
+                  Categoría
+                  <select id="itemCategory" required></select>
+                </label>
+                <label>
+                  Fecha
+                  <input id="itemDate" type="date" required />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Cantidad
+                  <input id="itemQuantity" type="number" min="0" step="1" required />
+                </label>
+                <label>
+                  Stock mínimo
+                  <input id="itemMinStock" type="number" min="0" step="1" value="0" required />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Unidad
+                  <input id="itemUnit" type="text" placeholder="un, kg, caja" />
+                </label>
+                <label>
+                  Precio unitario
+                  <input id="itemPrice" type="number" min="0" step="0.01" value="0" />
+                </label>
+              </div>
+              <label>
+                Observaciones
+                <textarea id="itemNotes" rows="3"></textarea>
+              </label>
+              <button type="submit" class="primary-button">
+                <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+                Guardar item
+              </button>
+            </form>
+
+            <section class="panel category-panel">
+              <div class="panel-heading">
+                <h2>Categorías</h2>
+              </div>
+              <form id="categoryForm" class="category-form">
+                <input id="categoryName" type="text" placeholder="Nueva categoría" required />
+                <div class="category-actions">
+                  <button id="categorySubmitBtn" type="submit">
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                    Agregar
+                  </button>
+                  <button id="cancelCategoryEditBtn" type="button" class="ghost-button hidden">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+              <div id="categoryList" class="category-list" aria-live="polite"></div>
+            </section>
+
+            <section class="panel table-panel">
+              <div class="panel-heading">
+                <h2>Items cargados</h2>
+                <span id="tableCount" class="count-pill">0</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Categoría</th>
+                      <th>Cantidad</th>
+                      <th>Mínimo</th>
+                      <th>Fecha</th>
+                      <th>Precio</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="itemsTable"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel log-panel">
+              <div class="panel-heading">
+                <h2>Registro de movimientos</h2>
+                <div class="panel-actions">
+                  <span id="movementLogCount" class="count-pill">0</span>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Fecha y hora</th>
+                      <th>Usuario</th>
+                      <th>Movimiento</th>
+                      <th>Item</th>
+                      <th>Cantidad</th>
+                      <th>Fecha stock</th>
+                      <th>Detalle</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="movementLogTable"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
